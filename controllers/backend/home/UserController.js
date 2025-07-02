@@ -20,7 +20,7 @@ function UserController() {
     }; 
 
  this.newuser = function (req, res) {
-        res.render('backend/home/userregi.ejs', {
+        res.render('backend/home/userRegister.ejs', {
             title: 'Dental clinic',
             content: 'New User',
         });

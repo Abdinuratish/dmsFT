@@ -19,7 +19,7 @@ var medicineController= require('../controllers/backend/home/MedicineController.
 var invoicesController= require('../controllers/backend/home/InvoicesController.js');
 const AuthController = require('../controllers/backend/home/AuthController');
 var prescriptionsController = require('../controllers/backend/home/PrescriptionsController.js');
-var  UserController = require('../controllers/backend/home/UsersController.js');
+const  UserController = require('../controllers/backend/home/UserController.js');
 module.exports = function(app) { 
 
 function isAuthenticated(req, res, next) {
@@ -164,15 +164,22 @@ app.get('/forgot-password', (req, res) => {
 
 
 
-//   app.get('/newuser', function (req, res) {
-//   UserController.newuser(req, res);
-// });
+  app.route('/viewUsers').get(function (req, res) {
+  UserController.userviews(req, res);
+});
 
+app.route('/addUser').post(function (req, res) {
+  UserController.user_register(req, res);
+});
 
-// app.post('/user_register', UserController.user_register);
-// app.get('/viewUsers', function (req, res) {
-//   UserController.userviews(req, res); // make sure the method name matches your controller!
-// });
+app.route('/editUser').post(function (req, res) {
+  UserController.edit_user(req, res);
+});
+
+app.route('/deleteUser').post(function (req, res) {
+  UserController.delete_user(req, res);
+});
+
 
 
 
