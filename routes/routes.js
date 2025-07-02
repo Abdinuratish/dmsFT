@@ -164,15 +164,15 @@ app.get('/forgot-password', (req, res) => {
 
 
 
-  app.get('/newuser', function (req, res) {
-  UserController.newuser(req, res);
-});
+//   app.get('/newuser', function (req, res) {
+//   UserController.newuser(req, res);
+// });
 
 
-app.post('/user_register', UserController.user_register);
-app.get('/viewUsers', function (req, res) {
-  UserController.userviews(req, res); // make sure the method name matches your controller!
-});
+// app.post('/user_register', UserController.user_register);
+// app.get('/viewUsers', function (req, res) {
+//   UserController.userviews(req, res); // make sure the method name matches your controller!
+// });
 
 
 
