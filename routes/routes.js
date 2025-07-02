@@ -19,7 +19,7 @@ var medicineController= require('../controllers/backend/home/MedicineController.
 var invoicesController= require('../controllers/backend/home/InvoicesController.js');
 const AuthController = require('../controllers/backend/home/AuthController');
 var prescriptionsController = require('../controllers/backend/home/PrescriptionsController.js');
-var  UserController = require('../controllers/backend/home/UserController.js');
+var  UserController = require('../controllers/backend/home/UsersController.js');
 module.exports = function(app) { 
 
 function isAuthenticated(req, res, next) {
@@ -164,15 +164,16 @@ app.get('/forgot-password', (req, res) => {
 
 
 
-   app.route('/newuser ').get(function (req, res) {
+  app.get('/newuser', function (req, res) {
   UserController.newuser(req, res);
 });
 
 
 app.post('/user_register', UserController.user_register);
-app.route('/viewUsers').get(function (req, res) {
-  UserController.viewUsers(req, res);
+app.get('/viewUsers', function (req, res) {
+  UserController.userviews(req, res); // make sure the method name matches your controller!
 });
+
 
 
 
