@@ -1,16 +1,32 @@
-const db = require('../../../db'); // adjust path as needed
 
-module.exports = {
-  getAllUsers: async function () {
-    return db.query('SELECT * FROM users');
-  },
-  addUser: async function (username, password, role_id) {
-    return db.query('INSERT INTO users (username, password, role_id) VALUES (?, ?, ?)', [username, password, role_id]);
-  },
-  deleteUser: async function (id) {
-    return db.query('DELETE FROM users WHERE id = ?', [id]);
-  },
-  editUser: async function (id, username, password, role_id) {
-    return db.query('UPDATE users SET username=?, password=?, role_id=? WHERE id=?', [username, password, role_id, id]);
-  }
-};
+function UserModel() {
+    // View all users
+    this.getAllUsers = function () {
+    return new Promise((resolve, reject) => {
+        const query = `
+             select * from users
+        `;
+        connection.query(query, (err, rows) => {
+            if (err) {
+                console.error('Database Fetch Error:', err);
+                reject(err);
+            } else {
+                resolve(rows);
+            }
+        });
+    });
+}; 
+
+    // Add a user
+    this.addUser = function (username, password, role) {
+        return new Promise((resolve, reject) => {
+            const query = 'INSERT INTO users (username, password, role) VALUES (?, ?, ?)';
+            connection.query(query, [username, password, role], (err, rows) => {
+                if (err) reject(err);
+                else resolve(rows);
+            });
+        });
+    };
+}
+
+module.exports = new UserModel();

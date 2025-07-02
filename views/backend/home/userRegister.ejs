@@ -1,0 +1,171 @@
+ <% include ./../layout/header.ejs %>
+ <style>
+    body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        background-color: #eef2f5;
+    }
+
+    .content-wrapper {
+        padding: 30px;
+        background-color: #eef2f5;
+    }
+
+    .box {
+        background: #ffffff;
+        border-radius: 10px;
+        padding: 30px;
+        max-width: 800px;
+        margin: auto;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s ease;
+    }
+
+    .box:hover {
+        transform: translateY(-5px);
+    }
+
+    .box-header h1 {
+        text-align: center;
+        font-size: 28px;
+        font-weight: bold;
+        color: #333;
+        margin-bottom: 20px;
+    }
+
+    form {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 20px;
+    }
+
+    .form-group {
+        display: flex;
+        flex-direction: column;
+    }
+
+    label {
+        font-weight: 600;
+        margin-bottom: 6px;
+        color: #555;
+    }
+
+    input, select {
+        padding: 12px;
+        font-size: 15px;
+        border: 1px solid #ccc;
+        border-radius: 6px;
+        transition: 0.3s;
+        background-color: #fdfdfd;
+    }
+
+    input:focus, select:focus {
+        border-color: #007bff;
+        box-shadow: 0 0 5px rgba(0, 123, 255, 0.2);
+        outline: none;
+        background-color: #fff;
+    }
+
+    .modal-footer {
+        grid-column: span 2;
+        display: flex;
+        justify-content: flex-end;
+        gap: 12px;
+        margin-top: 20px;
+    }
+
+    button[type="submit"], .modal-footer button[type="button"] {
+        padding: 12px 24px;
+        font-size: 15px;
+        font-weight: bold;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        transition: background-color 0.3s ease, transform 0.2s ease;
+    }
+
+    button[type="submit"] {
+        background-color: #28a745;
+        color: white;
+    }
+
+    button[type="submit"]:hover {
+        background-color: #218838;
+        transform: scale(1.03);
+    }
+
+    .modal-footer button[type="button"] {
+        background-color: #6c757d;
+        color: white;
+    }
+
+    .modal-footer button[type="button"]:hover {
+        background-color: #5a6268;
+        transform: scale(1.03);
+    }
+
+    @media (max-width: 600px) {
+        .modal-footer {
+            flex-direction: column;
+            align-items: stretch;
+        }
+    }
+</style>
+<% include ./../layout/header.ejs %>
+<style>
+    /* Isticmaal isla CSS-kii hore si design-ka u ekaado */
+</style>
+
+<div class="content-wrapper">
+    <section class="content-header">
+        <h1>User Registration</h1>
+    </section>
+    <section class="content">
+        <div class="box">
+            <div class="box-body"> 
+                <form id="userForm">
+                    <div class="form-group">
+                        <label for="username">Username</label>
+                        <input type="text" id="username" name="username" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="password">Password</label>
+                        <input type="password" id="password" name="password" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="role">Role</label>
+                        <select id="role" name="role" required>
+                            <option value="">Select Role</option>
+                            <option value="admin">Admin</option>
+                            <option value="doctor">Doctor</option>
+                            <option value="receptionist">Receptionist</option>
+                        </select>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit">Submit</button>
+                        <button type="button" onclick="window.location.href='/dashboard'">Cancel</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </section>
+</div>
+
+<script>
+    document.getElementById('userForm').onsubmit = function (e) {
+        e.preventDefault();
+        const data = Object.fromEntries(new FormData(e.target));
+
+        fetch('/user_register', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data),
+        })
+        .then(res => res.json())
+        .then(data => {
+            alert(data.message || 'User registered successfully!');
+            window.location.reload();
+        })
+        .catch(err => console.error('Error:', err));
+    };
+</script>
+<% include ./../layout/footer.ejs %>
