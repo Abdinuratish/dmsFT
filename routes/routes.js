@@ -6,7 +6,6 @@ More: http://expressjs.com/en/guide/routing.html
 
  */
 
-
 const GuestController = require('../controllers/backend/home/GuestController.js');
 var HomeController = require('../controllers/backend/home/HomeController.js');
 var studentController = require('../controllers/backend/home/StudentController.js');
@@ -18,8 +17,10 @@ var appointmentsController= require('../controllers/backend/home/AppointmentsCon
 var medicineController= require('../controllers/backend/home/MedicineController.js');
 var invoicesController= require('../controllers/backend/home/InvoicesController.js');
 const AuthController = require('../controllers/backend/home/AuthController');
+
 var prescriptionsController = require('../controllers/backend/home/PrescriptionsController.js');
-var  UserController = require('../controllers/backend/home/UsersController.js');
+
+ 
 module.exports = function(app) { 
 
 function isAuthenticated(req, res, next) {
@@ -41,17 +42,7 @@ function isAuthenticated(req, res, next) {
   app.get('/login', AuthController.showLogin);
   app.post('/login', AuthController.login);
   app.get('/logout', AuthController.logout);
-app.get('/forgot-password', (req, res) => {
-  res.render('auth/forgot-password'); // Create this EJS page
-});
-  app.get('/logout', (req, res) => {
-  req.session.destroy(err => {
-    if (err) {
-      return res.status(500).send("Logout failed");
-    }
-    res.redirect('/login');
-  });
-});
+
   // Protected Home Route
   app.get('/', isAuthenticated, (req, res) => {
     HomeController.index(req, res);
@@ -164,36 +155,24 @@ app.get('/forgot-password', (req, res) => {
 
 
 
-//   app.get('/newuser', function (req, res) {
-//   UserController.newuser(req, res);
-// });
 
 
-// app.post('/user_register', UserController.user_register);
-// app.get('/viewUsers', function (req, res) {
-//   UserController.userviews(req, res); // make sure the method name matches your controller!
-// });
+
 
 
 
 
 
     // new development
-    // ...existing code...
-app.route('/newpatients').get(function (req, res) {
-  patientsController.newpatients(req, res);
-});    
+    app.route('/newpatients').get(function (req, res) {
+      patientsController.newpatients(req, res);
+    });    
 
-app.post('/patients_register', patientsController.patients_register);
+    app.post('/patients_register', patientsController.patients_register);
 
-app.route('/patientviews').get(function (req, res) {
-  patientsController.patientviews(req, res);
-});  
-
-// 👉 Add this line for updating patient info
-app.post('/edit_patient', patientsController.edit_patient);
-
-// ...existing code...
+    app.route('/patientviews').get(function (req, res) {
+      patientsController.patientviews(req, res);
+    });  
 
       //Services
     // app.route('/newservices').get(function (req, res) {
@@ -225,6 +204,8 @@ app.post('/edit_patient', patientsController.edit_patient);
 
 
 
+
+
       app.route('/viewMedicine').get(function (req, res) {
       medicineController.viewMedicine(req, res);
     });
@@ -246,34 +227,8 @@ app.post('/edit_patient', patientsController.edit_patient);
        
     app.post('/prescription_delete', prescriptionsController.prescription_delete);
 
-   // =======================
-// 👥 User Management Routes
-// =======================
-app.route('/viewUsers').get(function (req, res) {
-  userController.viewUsers(req, res);
-});
-
-app.route('/addUser')
-   .post(function (req, res) {
-     userController.addUser(req, res);
-   });
-
-app.route('/deleteUser')
-   .post(function (req, res) {
-     userController.deleteUser(req, res);
-   });
-
-app.route('/editUser')
-   .post(function (req, res) {
-     userController.editUser(req, res);
-   });
-
-
     app.route('/viewInvoices').get(function (req, res) {
       invoicesController.getInvoices(req, res);
     });
- 
-  
-
   };
  
