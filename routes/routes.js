@@ -19,7 +19,7 @@ var medicineController= require('../controllers/backend/home/MedicineController.
 var invoicesController= require('../controllers/backend/home/InvoicesController.js');
 const AuthController = require('../controllers/backend/home/AuthController');
 var prescriptionsController = require('../controllers/backend/home/PrescriptionsController.js');
-var  UserController = require('../controllers/backend/home/UsersController.js');
+var  UserController = require('../controllers/backend/home/UserController.js');
 module.exports = function(app) { 
 
 function isAuthenticated(req, res, next) {
