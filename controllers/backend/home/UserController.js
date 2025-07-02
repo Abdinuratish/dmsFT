@@ -44,7 +44,8 @@ this.user_register = [
 
     const { username, password, role } = req.body;
 
-   UserModel.user_register(username, password, role)
+   UserModel.addUser(username, password, role)
+
       .then(() => res.status(200).send({ message: 'User registered successfully!' }))
       .catch(err => {
         console.error(err); // Log the error for debugging
@@ -52,20 +53,17 @@ this.user_register = [
       });
   }
 ];
-    this.edit_user = function (req, res) {
-    const { id, username, password, role } = req.body;
-
-    if (!id || !username || !password || !role) {
-        return res.status(400).json({ message: 'All fields are required' });
-    }
-
-    usersModel.edit_user(id, username, password, role)
-        .then(() => res.status(200).send({ message: 'User updated successfully!' }))
-        .catch(err => {
-            console.error(err);
-            res.status(500).send({ error: 'Failed to update user', details: err });
+    this.editUser = function (id, username, password, role) {
+    return new Promise((resolve, reject) => {
+        const query = 'UPDATE users SET username = ?, password = ?, role = ? WHERE id = ?';
+        connection.query(query, [username, password, role, id], (err, rows) => {
+            if (err) reject(err);
+            else resolve(rows);
         });
+    });
+    
 };
+
 
 
 
