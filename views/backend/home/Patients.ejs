@@ -1,0 +1,446 @@
+<% include ./../layout/header.ejs %>
+<style>
+    /* Modal styling */
+    .modal {
+      display: none;
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: white;
+      padding: 30px;
+      border-radius: 12px;
+      width:100%;
+      max-width:800px;
+      max-height: 90vh;
+      overflow-y: auto;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+      z-index: 1000;
+    }
+    
+    .modal-header {
+      font-size: 26px;
+      font-weight: bold;
+      margin-bottom: 20px;
+    }
+    
+    .modal-content {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+    
+    /* Grid layout for form */
+    #insertForm {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 20px;
+    }
+    
+    .form-group {
+      display: flex;
+      flex-direction: column;
+    }
+    
+    .form-group label {
+      font-weight: bold;
+      margin-bottom: 6px;
+      font-size: 16px;
+    }
+    
+    .form-group input,
+    .form-group select {
+      padding: 12px;
+      font-size: 16px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      outline: none;
+      transition: border-color 0.3s;
+    }
+    
+    .form-group input:focus,
+    .form-group select:focus {
+      border-color: #007BFF;
+      box-shadow: 0 0 5px rgba(0, 123, 255, 0.3);
+    }
+    
+    .modal-footer {
+      grid-column: span 2;
+      display: flex;
+      justify-content: flex-end;
+      gap: 15px;
+      margin-top: 10px;
+    }
+    
+    .modal-footer button {
+      padding: 12px 20px;
+      font-size: 16px;
+      font-weight: bold;
+      color: #fff;
+      background-color: #007BFF;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+    
+    .modal-footer button:hover {
+      background-color: #0056b3;
+    }
+    
+    .overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 999;
+    }
+    </style>
+    
+    
+
+<!-- Content Wrapper -->
+<div class="content-wrapper">
+  <section class="content-header">
+    <h1>Patients</h1>
+
+    <div style="overflow: auto; padding: 10px;">
+     
+          
+                <button style="text-align: center; margin-left: 20px;;" class="btn btn-success" onclick="openFilterModal()">Filter</button>
+      <button style="float: right; text-align: center;" class="btn btn-primary" onclick="window.print()">Print</button>
+    </div>
+    
+
+  </section>
+
+  <section class="content">
+    <div class="box">
+      <div class="box-header with-border">
+        <div class="box-tools pull-right">
+          <button type="button" class="btn btn-box-tool" data-widget="collapse">
+            <i class="fa fa-minus"></i>
+          </button>
+        </div>
+      </div> 
+      <div style="text-align: center; margin-bottom: 20px;">
+        <img src="../../dist/img/patient.jpeg" class="img-circle" alt="Logo Image" style="max-width: 100px; height: 100px;">
+      </div> 
+      <div class="box-body">    
+        <table class="table table-striped" style="border: none;">
+            <thead>
+              <tr>
+                <th style="border: none;">SQN</th>
+                <th style="border: none;">Name</th>
+                <th style="border: none;">Createddate</th>
+                <th style="border: none;">phone</th>
+                <th style="border: none;">Email</th>
+                <th style="border: none;">Gender</th>
+                <th style="border: none;">City</th>
+                <th style="border: none;">State</th>
+                <th style="border: none;">Address</th>
+                <th style="border: none;">Actions</th>
+            </tr>
+            </thead>
+            <tbody>
+              <% if (patients.length > 0) { %>
+                <% patients.forEach((pat, index) => { %>
+                  <tr style="border: none;">
+                    <td style="border: none;"><%= index + 1 %></td>
+                    <td style="border: none;"><%= pat.first_name %> <%= pat.last_name %></td>
+                    <td style="border: none;"><%= pat.date_of_birth %></td>
+                    <td style="border: none;"><%= pat.phone %></td>
+                    <td style="border: none;"><%= pat.email %></td>
+                    <td style="border: none;"><%= pat.gender %></td>
+                    <td style="border: none;"><%= pat.city %></td>
+                    <td style="border: none;"><%= pat.state %></td>
+                    <td style="border: none;"><%= pat.address %></td>
+                    <!-- <td style="border: none;"><%= pat.zip_code %></td> -->
+                               <td style="border: none;">
+  <button 
+    class="btn btn-warning"
+    onclick="openEditModal(
+      '<%= pat.patient_id %>',
+      '<%= pat.first_name %>',
+      '<%= pat.last_name %>',
+      '<%= pat.date_of_birth %>',
+      '<%= pat.phone %>',
+      '<%= pat.email %>',
+      '<%= pat.gender %>',
+      '<%= pat.city %>',
+      '<%= pat.state %>',
+      '<%= pat.address %>'
+    )"
+  >Edit</button>
+  <button 
+    class="btn btn-danger" 
+    onclick="openDeleteModal('<%= pat.patient_id %>')"
+  >Delete</button>
+</td>
+                  </tr>
+                <% }); %>
+              <% } else { %>
+                <tr style="border: none;">
+                  <td colspan="6" class="text-center" style="font-weight: bold; color: gray; border: none;">No records to display</td>
+                </tr>
+              <% } %>
+            </tbody>
+          </table>
+            
+      </div>
+    </div>
+  </section>
+</div>
+
+
+<!-- Filter Modal -->
+<div id="filterModal" class="modal">
+  <div class="modal-content">
+    <div class="modal-header">Filter order</div>
+    <div  style="margin-bottom: 20px;">
+      <form method="POST" action="/orderviews_filter" onsubmit="return validateForm()">
+            <!-- Status Dropdown -->
+            <div class="form-group">
+            <label for="status"></label>
+            <select id="status" name="status">
+                <option value="%">All</option>
+                <option value="1">Approved</option>
+                <option value="2">Rejected</option>
+                <option value="0">Pending</option>
+            </select> 
+          </div>
+
+            <!-- Ordered Date Fields -->
+            <div class="form-group">
+            <label for="startDate"></label>
+            <input type="date" id="startDate" name="startDate">
+          </div>
+            <div class="form-group">
+            <label for="endDate"></label>
+            <input type="date" id="endDate" name="endDate">
+          </div>
+            <!-- Submit Button -->
+            <div class="modal-footer">
+            <button type="submit">Filter</button>
+            <button type="button" class="btn btn-secondary" onclick="closeModal('filterModal')">Cancel</button>
+          </div>
+
+        </form>
+    </div>
+  </div>
+</div> 
+
+ 
+<!-- Edit Modal -->
+<div id="editModal" class="modal">
+  <div class="modal-content">
+    <div class="modal-header">Edit Patient</div>
+    <form id="editForm">
+      <input type="hidden" id="editId">
+      <div class="form-group">
+        <label for="editFirstName">First Name:</label>
+        <input type="text" id="editFirstName" class="form-control" required>
+      </div>
+      <div class="form-group">
+        <label for="editLastName">Last Name:</label>
+        <input type="text" id="editLastName" class="form-control" required>
+      </div>
+      <div class="form-group">
+        <label for="editDOB">Date of Birth:</label>
+        <input type="date" id="editDOB" class="form-control" required>
+      </div>
+      <div class="form-group">
+        <label for="editPhone">Phone:</label>
+        <input type="text" id="editPhone" class="form-control" required>
+      </div>
+      <div class="form-group">
+        <label for="editEmail">Email:</label>
+        <input type="email" id="editEmail" class="form-control" required>
+      </div>
+      <div class="form-group">
+        <label for="editGender">Gender:</label>
+        <select id="editGender" class="form-control" required>
+          <option value="">Select</option>
+          <option value="Male">Male</option>
+          <option value="Female">Female</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="editCity">City:</label>
+        <input type="text" id="editCity" class="form-control" required>
+      </div>
+      <div class="form-group">
+        <label for="editState">State:</label>
+        <input type="text" id="editState" class="form-control" required>
+      </div>
+      <div class="form-group">
+        <label for="editAddress">Address:</label>
+        <input type="text" id="editAddress" class="form-control" required>
+      </div>
+      <div class="modal-footer">
+        <button type="submit" class="btn btn-primary">Update</button>
+        <button type="button" class="btn btn-secondary" onclick="closeModal('editModal')">Cancel</button>
+      </div>
+    </form>
+  </div>
+</div>
+<!-- Delete Modal -->
+<div id="deleteModal" class="modal">
+  <div class="modal-content">
+    <div class="modal-header">Confirm Deletion</div>
+    <p>Are you sure you want to delete this order?</p>
+    <div class="modal-footer">
+      <button id="confirmDelete" class="btn btn-danger">Yes, Delete</button>
+      <button type="button" class="btn btn-secondary" onclick="closeModal('deleteModal')">Cancel</button>
+    </div>
+  </div>
+</div>
+<!-- Overlay -->
+<div class="overlay" id="overlay"></div>
+<script>
+  // Open modal
+  function openModal(modalId) {
+      document.getElementById(modalId).style.display = 'block';
+      document.getElementById('overlay').style.display = 'block';
+  }
+
+     
+
+
+  // Close modal
+  function closeModal(modalId) {
+      document.getElementById(modalId).style.display = 'none';
+      document.getElementById('overlay').style.display = 'none';
+  }
+
+     // Open add modal
+function openNewCashModal() {
+       openModal('addModal');
+} 
+
+
+
+   // Open Filter modal
+function openFilterModal() {
+       openModal('filterModal');
+} 
+
+ // Open edit modal
+function openEditModal(id, firstName, lastName, dob, phone, email, gender, city, state, address) {
+    document.getElementById('editId').value = id;
+    document.getElementById('editFirstName').value = firstName;
+    document.getElementById('editLastName').value = lastName;
+    document.getElementById('editDOB').value = dob;
+    document.getElementById('editPhone').value = phone;
+    document.getElementById('editEmail').value = email;
+    document.getElementById('editGender').value = gender;
+    document.getElementById('editCity').value = city;
+    document.getElementById('editState').value = state;
+    document.getElementById('editAddress').value = address;
+    openModal('editModal');
+}
+  // Open delete modal
+  function openDeleteModal(id) {
+      document.getElementById('confirmDelete').onclick = function () {
+          deleteorder(id);
+      };
+      openModal('deleteModal');
+  }
+ 
+
+
+// Handle form submission for updating status and amount
+document.getElementById('editForm').onsubmit = function (e) {
+    e.preventDefault();
+    const id = document.getElementById('editId').value;
+    const first_name = document.getElementById('editFirstName').value;
+    const last_name = document.getElementById('editLastName').value;
+    const date_of_birth = document.getElementById('editDOB').value;
+    const phone = document.getElementById('editPhone').value;
+    const email = document.getElementById('editEmail').value;
+    const gender = document.getElementById('editGender').value;
+    const city = document.getElementById('editCity').value;
+    const state = document.getElementById('editState').value;
+    const address = document.getElementById('editAddress').value;
+
+    fetch('/edit_patient', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+            id, first_name, last_name, date_of_birth, phone, email, gender, city, state, address
+        }),
+    })
+    .then(response => response.json())
+    .then(data => {
+        alert(data.message || 'Patient updated successfully!');
+        location.reload();
+    })
+    .catch(err => console.error(err));
+};
+  // Delete order
+  function deleteorder(id) {
+      fetch('/delete_order', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ id }),
+      })
+      .then(response => response.json())
+      .then(data => {
+          alert(data.message || 'order deleted successfully!');
+          location.reload();
+      })
+      .catch(err => console.error(err));
+  }
+
+
+
+  function validateForm() {
+    // Get the values of startDate and endDate
+    var startDate = document.getElementById("startDate").value;
+    var endDate = document.getElementById("endDate").value;
+
+    // Check if startDate and endDate have values
+    if (!startDate || !endDate) {
+        alert("Both Start Date and End Date are required.");
+        return false; // Prevent form submission
+    }
+
+    // Additional logic can go here, for example, checking that startDate is before endDate.
+    if (new Date(startDate) > new Date(endDate)) {
+        alert("Start Date cannot be later than End Date.");
+        return false; // Prevent form submission
+    }
+
+    // If everything is fine, submit the form
+    return true;
+}
+
+
+function validateFormAddStudent() {
+    // Get the values of startDate and endDate
+     
+    var description = document.getElementById("description").value;
+    var editAmount1 = document.getElementById("editAmount1").value;
+
+    // Check if startDate and endDate have values
+    if (!editAmount1) {
+        alert("Amount is required.");
+        return false; // Prevent form submission
+    } 
+    if (!description) {
+        alert("Description is required.");
+        return false; // Prevent form submission
+    } 
+
+    // If everything is fine, submit the form
+    return true;
+}
+
+
+
+
+</script>
+<% include ./../layout/footer.ejs %>

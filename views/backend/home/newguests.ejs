@@ -1,0 +1,70 @@
+<% include ./../layout/header.ejs %>
+<div class="content-wrapper">
+    <section class="content-header">
+        <h1>New Guest</h1>
+    </section>
+    <section class="content">
+        <div class="box">
+            <div class="box-header with-border">
+                <div class="box-tools pull-right">
+                    <button type="button" class="btn btn-box-tool" data-widget="collapse" data-toggle="tooltip" title="Collapse">
+                        <i class="fa fa-minus"></i></button>
+                    <button type="button" class="btn btn-box-tool" data-widget="remove" data-toggle="tooltip" title="Remove">
+                        <i class="fa fa-times"></i></button>
+                </div>
+            </div>
+            <div class="box-body">
+              <% if (typeof query !== 'undefined' && typeof query.status !== 'undefined') { %>
+                <div class="alert <%= query.status === 'success' ? 'alert-success' : 'alert-danger' %>">
+                    <%= query.status === 'success' ? 'Operation was successful!' : 'There was an error.' %>
+                </div>
+            <% } %>
+            <!-- action="/guest_register" method="POST" -->
+            <form  id="insertForm">
+                    <div class="form-group">
+                        <label for="name">Name:</label>
+                        <input type="text" id="editName" name="editName" required class="form-control" placeholder="Enter Name">
+                    </div>
+                    <div class="form-group">
+                        <label for="phone">Phone:</label>
+                        <input type="tel" id="editPhone" name="editPhone" required class="form-control" placeholder="Enter Phone">
+                    </div>
+                    <div class="form-group">
+                        <label for="email">Email:</label>
+                        <input type="email" id="editEmail" name="editEmail" required class="form-control" placeholder="Enter Email">
+                    </div>
+                    <div class="form-group">
+                        <label for="address">Address:</label>
+                        <textarea id="editAddress" name="editAddress" rows="3" required class="form-control" placeholder="Enter Address"></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Register</button>
+                </form>
+            </div>
+        </div>
+    </section>
+</div> 
+<script>
+
+// Handle form submission
+document.getElementById('insertForm').onsubmit = function (e) {
+    e.preventDefault();
+    const phone = document.getElementById('editPhone').value;
+    const name = document.getElementById('editName').value;
+    const email = document.getElementById('editEmail').value;
+    const address = document.getElementById('editAddress').value;
+    fetch('/guest_register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ phone, name, email, address }),
+    })
+    .then(response => response.json())
+    .then(data => {
+        alert(data.message || 'Guest Insert successfully!');
+        location.reload();
+    })
+    .catch(err => console.error(err));
+};
+
+</script>
+
+<% include ./../layout/footer.ejs %>

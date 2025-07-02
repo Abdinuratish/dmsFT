@@ -1,0 +1,315 @@
+<% include ./../layout/header.ejs %>
+
+<!-- Custom Styles -->
+<% include ./../layout/styles.ejs %>
+
+<!-- Content Wrapper -->
+<div class="content-wrapper">
+  <section class="content-header">
+    <h1>Services</h1>
+    <div style="margin-top: 10px;">
+      <button class="btn btn-success" onclick="openModal('addModal')">Add Service</button>
+      <button class="btn btn-info" onclick="openModal('filterModal')">Filter</button>
+      <button class="btn btn-primary" onclick="window.print()" style="float: right;">Print</button>
+    </div>
+  </section>
+
+  <section class="content">
+    <div class="box">
+      <div class="box-header with-border">
+        <div class="box-tools pull-right">
+          <button class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
+        </div>
+      </div>
+      <div style="text-align: center; margin: 20px 0;">
+        <img src="../../dist/img/services.jpg" class="img-circle" alt="Logo" style="max-width: 100px; height: 100px;">
+      </div>
+      <div class="box-body">
+        <table class="table table-bordered table-striped text-center">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Name</th>
+              <th>Description</th>
+              <th>Category</th>
+              <th>Price</th>
+              <th>Duration (min)</th>
+              <th>Active</th>
+              <th>Created</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% if (services.length > 0) { %>
+              <% services.forEach((ser, index) => { %>
+                <tr>
+                  <td><%= index + 1 %></td>
+                  <td><%= ser.name %></td>
+                  <td><%= ser.description %></td>
+                  <td><%= ser.category %></td>
+                  <td><%= ser.price %></td>
+                  <td><%= ser.duration_minutes %></td>
+                  <td>
+                    <% if (ser.is_active === 1 || ser.is_active === '1') { %>
+                      <span style="color: green; font-weight: bold;">Active</span>
+                    <% } else { %>
+                      <span style="color: red; font-weight: bold;">Not Active</span>
+                    <% } %>
+                  </td>
+                  <td><%= ser.created_at %></td>
+                  <td>
+                    <button class="btn btn-warning"
+                            onclick="openEditModal('<%= ser.id %>', '<%= ser.name %>', '<%= ser.description %>')">
+                      Edit
+                    </button>
+                    <button class="btn btn-danger"
+                            onclick="openDeleteModal('<%= ser.id %>')"
+                            <%= (ser.is_active === 1) ? 'disabled' : '' %>
+                            style="<%= (ser.is_active === 1) ? 'cursor: not-allowed; background-color: #ccc;' : '' %>">
+                      Delete
+                    </button>
+                  </td>
+                </tr>
+              <% }); %>
+            <% } else { %>
+              <tr>
+                <td colspan="9" class="text-center text-muted">No services found.</td>
+              </tr>
+            <% } %>
+          </tbody>
+        </table>
+        
+        
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- Add Service Modal -->
+<div id="addModal" class="modal">
+  <div class="modal-header">Add New Service</div>
+  <form id="insertForm">
+    <div class="form-group">
+      <label for="name">Service Name</label>
+      <input type="text" id="name" name="name" required placeholder="e.g. General Checkup">
+    </div>
+    <div class="form-group">
+      <label for="description">Description</label>
+      <textarea id="description" name="description" rows="2" required></textarea>
+    </div>
+    <div class="form-group">
+      <label for="category">Category</label>
+      <input type="text" id="category" name="category" required placeholder="e.g. Consultation">
+    </div>
+    <div class="form-group">
+      <label for="price">Price ($)</label>
+      <input type="number" id="price" name="price" required>
+    </div>
+    <div class="form-group">
+      <label for="duration_minutes">Duration (Minutes)</label>
+      <input type="number" id="duration_minutes" name="duration_minutes" required>
+    </div>
+    <div class="form-group">
+      <label for="is_active">Is Active?</label>
+      <select id="is_active" name="is_active" required>
+        <option value="">Select...</option>
+        <option value="1">Yes</option>
+        <option value="0">No</option>
+      </select>
+    </div>
+    <div class="modal-footer">
+      <button type="submit" class="btn btn-success">Submit</button>
+      <button type="button" class="btn btn-secondary" onclick="closeModal('addModal')">Cancel</button>
+    </div>
+  </form>
+</div>
+
+<!-- Filter Modal -->
+<div id="filterModal" class="modal">
+  <div class="modal-header">Filter Services</div>
+  <form method="POST" action="/orderviews_filter" onsubmit="return validateForm()">
+    <div class="form-group">
+      <label for="status">Status</label>
+      <select id="status" name="status">
+        <option value="%">All</option>
+        <option value="1">Approved</option>
+        <option value="2">Rejected</option>
+        <option value="0">Pending</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label for="startDate">Start Date</label>
+      <input type="date" id="startDate" name="startDate">
+    </div>
+    <div class="form-group">
+      <label for="endDate">End Date</label>
+      <input type="date" id="endDate" name="endDate">
+    </div>
+    <div class="modal-footer">
+      <button type="submit" class="btn btn-primary">Apply Filter</button>
+      <button type="button" class="btn btn-secondary" onclick="closeModal('filterModal')">Cancel</button>
+    </div>
+  </form>
+</div>
+
+
+<!-- Delete Modal -->
+<div id="deleteModal" class="modal">
+  <div class="modal-content">
+    <div class="modal-header">Confirm Deletion</div>
+    <p>Are you sure you want to delete this order?</p>
+    <div class="modal-footer">
+      <button id="confirmDelete" class="btn btn-danger">Yes, Delete</button>
+      <button type="button" class="btn btn-secondary" onclick="closeModal('deleteModal')">Cancel</button>
+    </div>
+  </div>
+</div>
+
+
+
+<!-- Edit Modal -->
+<div id="editModal" class="modal">
+  <div class="modal-content">
+    <div class="modal-header">Edit Service</div>
+    <form id="editForm">
+      <input type="hidden" id="editId">
+      <div class="form-group">
+        <label for="name3">Name:</label>
+        <input type="text" id="name3" name="name3" class="form-control" required>
+      </div>
+      
+      <div class="form-group">
+        <label for="description3">description:</label>
+        <input type="text" id="description3" name ="description3" class="form-control" required>
+      </div>
+      
+      <div class="form-group">
+      <label for="status11">Status</label>
+      <select id="status11" name="status11">
+        <option value="%">All</option>
+        <option value="1">Approved</option>
+        <option value="2">Rejected</option>
+        <option value="0">Pending</option>
+      </select>
+    </div> 
+
+      <div class="modal-footer">
+        <button type="submit" class="btn btn-primary">Update</button>
+        <button type="button" class="btn btn-secondary" onclick="closeModal('editModal')">Cancel</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+
+
+<!-- Overlay -->
+<div id="overlay" class="overlay"></div>
+
+<!-- Scripts -->
+<script>
+  function openModal(id) {
+    document.getElementById(id).style.display = 'block';
+    document.getElementById('overlay').style.display = 'block';
+  }
+
+   // Open edit modal
+function openEditModal(id, name, description) {
+    document.getElementById('editId').value = id;
+    document.getElementById('name3').value = name;
+    document.getElementById('description3').value = description;
+
+    openModal('editModal');
+}
+
+  function closeModal(id) {
+    document.getElementById(id).style.display = 'none';
+    document.getElementById('overlay').style.display = 'none';
+  }
+
+  function validateForm() {
+    const startDate = document.getElementById("startDate").value;
+    const endDate = document.getElementById("endDate").value;
+
+    if (!startDate || !endDate) {
+      alert("Please select both start and end dates.");
+      return false;
+    }
+    if (new Date(startDate) > new Date(endDate)) {
+      alert("Start date cannot be after end date.");
+      return false;
+    }
+    return true;
+  }
+
+  document.getElementById('insertForm').onsubmit = function (e) {
+    e.preventDefault();
+    const formData = Object.fromEntries(new FormData(this));
+
+    fetch('/service_register', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(formData),
+    })
+    .then(res => res.json())
+    .then(data => {
+      alert(data.message || 'Service added!');
+      location.reload();
+    })
+    .catch(err => console.error(err));
+  };
+
+
+   // Open delete modal
+   function openDeleteModal(id) {
+      document.getElementById('confirmDelete').onclick = function () {
+          deleteorder(id);
+      };
+      openModal('deleteModal');
+  }
+
+
+     // Delete order
+  function deleteorder(id) {
+    alert (id);
+      fetch('/delete_services', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ id }),
+      })
+      .then(response => response.json())
+      .then(data => {
+          alert(data.message || 'order deleted successfully!');
+          location.reload();
+      })
+      .catch(err => console.error(err));
+  }
+
+
+// Handle form submission for updating status and amount
+document.getElementById('editForm').onsubmit = function (e) {
+    e.preventDefault();
+    const id = document.getElementById('editId').value;
+    const name = document.getElementById('name3').value;
+    const description = document.getElementById('description3').value;
+    const status = document.getElementById('status11').value;
+
+    fetch('/edit_services', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({id, name, description,status}),
+    })
+    .then(response => response.json())
+    .then(data => {
+        alert(data.message || 'Service updated successfully!');
+        location.reload();
+    })
+    .catch(err => console.error(err));
+};
+
+  
+
+
+</script>
+
+<% include ./../layout/footer.ejs %>

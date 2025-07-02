@@ -1,0 +1,148 @@
+<% include ./../layout/header.ejs %>
+<% include ./../layout/styles.ejs %>
+
+<!-- Content Wrapper -->
+<div class="content-wrapper">
+    <section class="content-header">
+    <h1>Invoices Managements</h1>
+    <div style="overflow: auto; padding: 10px;">
+      <button style="float: right; text-align: center;" class="btn btn-primary" onclick="window.print()">Print</button>
+    </div>
+  </section>
+  <section class="content">
+    <div class="box">
+      <div class="box-header with-border">
+        <div class="box-tools pull-right">
+          <button class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
+        </div>
+      </div>
+
+      <!-- Logo Centered -->
+      <div class="text-center my-3">
+        <img src="../../dist/img/invo.jpg" class="img-circle" alt="Logo" style="max-width: 100px; height: 100px;">
+      </div>
+
+      <!-- Invoice Table -->
+      <div class="box-body">
+        <table class="table table-bordered table-striped text-center">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Patient</th>
+              <th>Appointment Date</th>
+              <th>Invoice Date</th>
+              <th>Total Amount</th>
+              <th>Payment Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% if (invoices.length > 0) { %>
+              <% invoices.forEach((inv, index) => { %>
+                <tr>
+                  <td><%= index + 1 %></td>
+                  <td><%= inv.patient_name %></td>
+                  <td><%= inv.appointment_datetime %></td>
+                  <td><%= inv.invoice_date %></td>
+                  <td>$<%= inv.total_amount.toFixed(2) %></td>
+                  <td><%= inv.payment_status %></td>
+                  <td>
+                    <button 
+                      class="btn btn-info"
+                      onclick="viewInvoice(
+                        '<%= inv.invoice_id %>',
+                        '<%= inv.patient_name %>',
+                        '<%= inv.appointment_datetime %>',
+                        '<%= inv.invoice_date %>',
+                        '<%= inv.total_amount.toFixed(2) %>',
+                        '<%= inv.payment_status %>'
+                      )"
+                    >View</button>
+                    <button 
+                      class="btn btn-danger"
+                      onclick="deleteInvoice('<%= inv.invoice_id %>')"
+                    >Delete</button>
+                  </td>
+                </tr>
+              <% }); %>
+            <% } else { %>
+              <tr>
+                <td colspan="7" class="text-muted">No invoices found.</td>
+              </tr>
+            <% } %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- View Invoice Modal -->
+<div id="viewInvoiceModal" class="modal">
+  <div class="modal-content">
+    <div class="modal-header d-flex justify-content-between align-items-center">
+      <h4>Invoice Details</h4>
+      <button class="btn btn-primary" onclick="printInvoice()">Print</button>
+    </div>
+
+    <div class="modal-body">
+      <table class="table table-bordered text-left" id="invoiceTable">
+        <tbody>
+          <tr><th>Invoice ID</th><td id="view_invoice_id"></td></tr>
+          <tr><th>Patient</th><td id="view_patient_name"></td></tr>
+          <tr><th>Appointment Date</th><td id="view_appointment_datetime"></td></tr>
+          <tr><th>Invoice Date</th><td id="view_invoice_date"></td></tr>
+          <tr><th>Total Amount</th><td id="view_total_amount"></td></tr>
+          <tr><th>Payment Status</th><td id="view_payment_status"></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeModal('viewInvoiceModal')">Close</button>
+    </div>
+  </div>
+</div>
+
+<!-- Overlay -->
+<div id="overlay" class="overlay"></div>
+
+<!-- Scripts -->
+<script>
+  function viewInvoice(invoice_id, patient_name, appointment_datetime, invoice_date, total_amount, payment_status) {
+    document.getElementById('view_invoice_id').innerText = invoice_id;
+    document.getElementById('view_patient_name').innerText = patient_name;
+    document.getElementById('view_appointment_datetime').innerText = appointment_datetime;
+    document.getElementById('view_invoice_date').innerText = invoice_date;
+    document.getElementById('view_total_amount').innerText = "$" + total_amount;
+    document.getElementById('view_payment_status').innerText = payment_status;
+
+    openModal('viewInvoiceModal');
+  }
+
+  function openModal(id) {
+    document.getElementById(id).style.display = 'block';
+    document.getElementById('overlay').style.display = 'block';
+  }
+
+  function closeModal(id) {
+    document.getElementById(id).style.display = 'none';
+    document.getElementById('overlay').style.display = 'none';
+  }
+
+  function printInvoice() {
+    const modalContent = document.querySelector('#viewInvoiceModal .modal-content').innerHTML;
+    const printWindow = window.open('', '', 'height=600,width=800');
+    printWindow.document.write('<html><head><title>Invoice</title>');
+    printWindow.document.write('<link rel="stylesheet" href="/path/to/bootstrap.css">');
+    printWindow.document.write('</head><body>');
+    printWindow.document.write(modalContent);
+    printWindow.document.write('</body></html>');
+    printWindow.document.close();
+    printWindow.focus();
+    printWindow.print();
+    printWindow.close();
+  }
+</script>
+
+<% include ./../layout/footer.ejs %>
