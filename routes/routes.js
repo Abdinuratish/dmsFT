@@ -42,6 +42,17 @@ function isAuthenticated(req, res, next) {
   app.get('/login', AuthController.showLogin);
   app.post('/login', AuthController.login);
   app.get('/logout', AuthController.logout);
+  app.get('/forgot-password', (req, res) => {
+  res.render('auth/forgot-password'); // Create this EJS page
+});
+  app.get('/logout', (req, res) => {
+  req.session.destroy(err => {
+    if (err) {
+      return res.status(500).send("Logout failed");
+    }
+    res.redirect('/login');
+  });
+});
 
   // Protected Home Route
   app.get('/', isAuthenticated, (req, res) => {
@@ -230,5 +241,6 @@ function isAuthenticated(req, res, next) {
     app.route('/viewInvoices').get(function (req, res) {
       invoicesController.getInvoices(req, res);
     });
+
   };
  
